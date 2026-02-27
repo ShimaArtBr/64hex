@@ -863,8 +863,19 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   padding: 2px;
 }
 .install-banner.hidden { display: none; }
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+.app-footer {
+  text-align: center;
+  padding: 18px 22px 28px;
+  font-size: .72rem;
+  color: var(--dim);
+  letter-spacing: .08em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.app-footer .heart { color: #e03a1a; }
 </style>
-</head>
 <body>
 
 <!-- TOP BAR -->
@@ -891,7 +902,6 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
         <div class="lang-menu" id="langMenu" role="menu">
           <button class="lang-opt active" data-lang="pt" role="menuitem">🇧🇷 Português</button>
           <button class="lang-opt" data-lang="en" role="menuitem">🇬🇧 English</button>
-          <button class="lang-opt" data-lang="zh" role="menuitem">🇨🇳 中文</button>
         </div>
       </div>
 
@@ -960,6 +970,11 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 
 </main>
 
+<!-- FOOTER -->
+<footer class="app-footer">
+  <span data-i18n="footer"></span>
+</footer>
+
 <!-- PWA Install Banner -->
 <div class="install-banner hidden" id="installBanner" role="complementary" aria-label="Instalar aplicativo">
   <div class="install-banner-text">
@@ -1007,6 +1022,7 @@ var T = {
     lineMoving: 'móvel',
     installMsg: 'Adicione à tela inicial para uso offline',
     installAction: 'Instalar',
+    footer: 'FEITO COM <span class="heart">❤️</span> POR SOLLUN',
   },
   en: {
     brandSub: 'I Ching · 周易',
@@ -1027,27 +1043,8 @@ var T = {
     lineMoving: 'moving',
     installMsg: 'Add to home screen for offline use',
     installAction: 'Install',
+    footer: 'MADE WITH <span class="heart">❤️</span> BY SOLLUN',
   },
-  zh: {
-    brandSub: '易經 · 周易',
-    panelTitle: '問卦', questionLabel: '您的問題（選填）',
-    methodLabel: '方法',
-    methodRitual: '儀式', methodDirect: '直取',
-    methodRitualDesc: '三枚銅錢投擲六次，逐爻起卦，含動爻及變卦。',
-    methodDirectDesc: '直接從六十四卦中取一卦，不經銅錢儀式。',
-    consultBtn: '問卦',
-    loading: '載入中…',
-    loadError: '語料庫載入失敗，請確認 corpus.json 是否存在。',
-    emptyState: '靜心凝神，問卦',
-    secJudgment: '卦辭', secImage: '象傳', secLines: '爻辭',
-    movingAlert: '<b>動爻：第 %l 爻</b> — 此卦將變為下方之卦。',
-    mutantLabel: '變卦（動爻已應）',
-    upperTrig: '上卦', lowerTrig: '下卦',
-    hexN: '卦', noQuestion: '（未記問題）',
-    lineMoving: '動',
-    installMsg: '加到主屏幕以供離線使用',
-    installAction: '安裝',
-  }
 };
 
 function t(k) {
