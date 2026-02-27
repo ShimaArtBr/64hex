@@ -1342,8 +1342,9 @@ function buildLinesBlock(lines, movingLines) {
   var html = '';
   movingLines = movingLines || [];
 
-  lines.forEach(function(line, i) {
-    var isMoving = movingLines.indexOf(i) >= 0;
+  lines.forEach(function(line) {
+    // Usa line.position (1-6 do corpus) para checar movingLines (índices 0-5)
+    var isMoving = movingLines.indexOf(line.position - 1) >= 0;
     var headerPt = line.header_pt || ('Linha ' + line.position);
     var headerLabel = LANG === 'en'
       ? ('Line ' + line.position)
@@ -1383,7 +1384,7 @@ function buildLinesBlock(lines, movingLines) {
     }
 
     html += '</div>';
-    if (i < lines.length - 1) html += '<div class="section-divider"></div>';
+    if (line.position < lines[lines.length - 1].position) html += '<div class="section-divider"></div>';
   });
 
   return html;
