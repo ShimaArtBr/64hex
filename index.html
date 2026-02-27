@@ -42,7 +42,7 @@
   --panel2:   #261808;
   --text:     #ede8de;
   --muted:    #9a8878;
-  --dim:      #5a4a3a;
+  --dim:      #7a6a5a;
   --input-bg: #261808;
   --input-bd: rgba(180,140,80,.2);
   --shadow:   rgba(0,0,0,.6);
@@ -66,7 +66,14 @@
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 15px; scroll-behavior: smooth; }
+/* Focus visible global — acessibilidade WCAG 2.2 */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
   font-family: 'Noto Sans', sans-serif;
@@ -125,7 +132,7 @@ body {
 }
 
 .brand-sub {
-  font-size: .58rem;
+  font-size: .7rem;
   color: var(--muted);
   letter-spacing: .06em;
   font-family: 'Noto Sans', sans-serif;
@@ -138,7 +145,7 @@ body {
   border: 1px solid rgba(139,26,26,.4);
   border-radius: 20px;
   padding: 2px 9px;
-  font-size: .62rem;
+  font-size: .72rem;
   color: var(--lacquer2);
   letter-spacing: .08em;
   font-family: 'JetBrains Mono', monospace;
@@ -154,10 +161,11 @@ body {
   background: var(--panel);
   border: 1px solid var(--bg-gold);
   border-radius: var(--r);
-  padding: 5px 9px;
+  padding: 0 12px;
+  height: 44px;
   cursor: pointer;
   color: var(--text);
-  font-size: .79rem;
+  font-size: .82rem;
   font-family: 'Noto Sans', sans-serif;
   transition: border-color .2s;
 }
@@ -208,8 +216,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   background: var(--panel);
   border: 1px solid var(--bg-gold);
   border-radius: var(--r);
@@ -256,7 +264,8 @@ body {
   color: var(--gold);
   margin-bottom: 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--bg-gold);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(to right, rgba(201,168,76,.5), rgba(201,168,76,.08)) 1;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -266,7 +275,7 @@ body {
 .field-group { margin-bottom: 14px; }
 
 .field-label {
-  font-size: .59rem;
+  font-size: .72rem;
   color: var(--muted);
   letter-spacing: .09em;
   text-transform: uppercase;
@@ -373,7 +382,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .line-num {
   color: var(--dim);
   font-family: 'JetBrains Mono', monospace;
-  font-size: .62rem;
+  font-size: .72rem;
   width: 12px;
   text-align: right;
   flex-shrink: 0;
@@ -384,7 +393,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   height: 22px;
   border-radius: 50%;
   border: 1.5px solid var(--gold);
-  font-size: .62rem;
+  font-size: .72rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -418,7 +427,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .line-sum {
   font-family: 'JetBrains Mono', monospace;
   color: var(--muted);
-  font-size: .65rem;
+  font-size: .72rem;
   opacity: 0;
   transition: opacity .2s;
   flex-shrink: 0;
@@ -540,7 +549,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .hex-meta {}
 
 .hex-num {
-  font-size: .59rem;
+  font-size: .72rem;
   color: var(--muted);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -560,13 +569,13 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   font-style: italic;
 }
 .hex-name-tr {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--text);
   font-family: 'Noto Serif', serif;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .hex-keywords {
-  font-size: .67rem;
+  font-size: .72rem;
   color: var(--dim);
   margin-top: 6px;
   font-family: 'JetBrains Mono', monospace;
@@ -595,7 +604,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   padding: 3px 10px 3px 7px;
   font-size: .72rem;
 }
-.trig-pos { color: var(--dim); font-size: .59rem; font-family: 'JetBrains Mono', monospace; letter-spacing: .04em; }
+.trig-pos { color: var(--dim); font-size: .7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: .04em; }
 .trig-sym { font-size: 1rem; color: var(--lacquer2); }
 .trig-name { color: var(--muted); }
 .trig-sep { color: var(--dim); font-size: .6rem; margin: 0 3px; }
@@ -665,22 +674,26 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .section-lbl { font-size: .78rem; color: var(--muted); }
 
 .section-arrow {
-  font-size: .58rem;
+  font-size: .7rem;
   color: var(--dim);
   transition: transform .25s;
   flex-shrink: 0;
 }
 .section.open .section-arrow { transform: rotate(180deg); }
 
-/* Smooth accordion with max-height */
+/* Smooth accordion com CSS Grid */
 .section-body {
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
-  transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .35s;
+  transition: grid-template-rows .35s cubic-bezier(.4,0,.2,1), padding .35s cubic-bezier(.4,0,.2,1);
   padding: 0 15px;
 }
+.section-body > * {
+  overflow: hidden;
+}
 .section.open .section-body {
-  max-height: 9999px;
+  grid-template-rows: 1fr;
   padding: 0 15px 16px;
 }
 
@@ -689,7 +702,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .text-block:last-child { margin-bottom: 0; }
 
 .text-lang {
-  font-size: .56rem;
+  font-size: .7rem;
   color: var(--dim);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -756,7 +769,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   color: var(--red2);
   border-radius: 10px;
   padding: 1px 6px;
-  font-size: .57rem;
+  font-size: .72rem;
   letter-spacing: .05em;
 }
 
@@ -774,7 +787,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   transition: var(--transition-theme);
 }
 .hex2-label {
-  font-size: .59rem;
+  font-size: .72rem;
   color: var(--lacquer2);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -1346,7 +1359,7 @@ function buildSection(zhLabel, label, body, id, open) {
       '</div>' +
       '<span class="section-arrow" aria-hidden="true">▼</span>' +
     '</div>' +
-    '<div class="section-body" role="region">' + body + '</div>' +
+    '<div class="section-body" role="region"><div>' + body + '</div></div>' +
   '</div>';
 }
 
