@@ -66,7 +66,10 @@
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 15px; scroll-behavior: smooth; }
+html { font-size: 15px; scroll-behavior: smooth; color-scheme: dark; }
+
+/* Light mode override */
+[data-theme="light"] { color-scheme: light; }
 
 body {
   font-family: 'Noto Sans', sans-serif;
@@ -277,6 +280,7 @@ body {
 textarea {
   width: 100%;
   background: var(--input-bg);
+  background-color: var(--input-bg); /* força sobre override do browser */
   border: 1px solid var(--input-bd);
   border-radius: var(--r);
   color: var(--text);
@@ -287,9 +291,12 @@ textarea {
   resize: none;
   transition: border-color .2s, background .25s, color .25s;
   line-height: 1.65;
+  -webkit-appearance: none;
+  appearance: none;
+  color-scheme: inherit; /* herda o tema escuro/claro do html */
 }
 textarea:focus { border-color: var(--gold); }
-textarea::placeholder { color: var(--dim); font-style: italic; }
+textarea::placeholder { color: var(--muted); font-style: italic; }
 
 /* ── Method tabs ── */
 .method-tabs {
@@ -363,59 +370,11 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   margin: 3px 0;
 }
 
-.coin-stage-inner {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-}
-.coin-lines-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.hex-preview-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  padding-left: 8px;
-  border-left: 1px solid var(--bg-gold);
-  min-width: 36px;
-  opacity: 0;
-  transition: opacity .4s;
-}
-.hex-preview-col.visible { opacity: 1; }
-.hex-preview-line {
-  height: 6px;
-  width: 32px;
-  border-radius: 2px;
-  background: var(--gold);
-  position: relative;
-  flex-shrink: 0;
-}
-.hex-preview-line.yin::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 100%;
-  background: var(--panel2);
-  border-radius: 1px;
-}
-.hex-preview-line.moving {
-  background: var(--lacquer2);
-  box-shadow: 0 0 4px rgba(196,48,48,.4);
-}
-
 .line-result-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 0;
+  gap: 7px;
+  padding: 2px 0;
   font-size: .71rem;
 }
 
@@ -425,7 +384,6 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   width: 14px;
   text-align: right;
   flex-shrink: 0;
-  font-size: .65rem;
 }
 
 .coin {
@@ -451,15 +409,13 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .coin.tails { background: rgba(90,74,58,.15); color: var(--muted); border-color: var(--dim); }
 
 .line-glyph {
-  font-size: 1.4rem;
+  font-size: .95rem;
   color: var(--gold);
-  width: 22px;
+  width: 28px;
   text-align: center;
   flex-shrink: 0;
   opacity: 0;
   transition: opacity .2s;
-  line-height: 1;
-  letter-spacing: -1px;
 }
 .line-glyph.visible { opacity: 1; }
 .line-glyph.moving { color: var(--lacquer2); }
@@ -467,11 +423,10 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .line-sum {
   font-family: 'JetBrains Mono', monospace;
   color: var(--muted);
-  font-size: .65rem;
+  font-size: .68rem;
   opacity: 0;
   transition: opacity .2s;
   flex-shrink: 0;
-  width: 10px;
 }
 .line-sum.visible { opacity: 1; }
 .line-sum.moving { color: var(--lacquer2); }
@@ -662,45 +617,8 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   align-items: flex-start;
   gap: 9px;
   line-height: 1.5;
-  flex-wrap: wrap;
 }
 .moving-alert-icon { flex-shrink: 0; margin-top: 1px; }
-
-.moving-alert-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 7px;
-  width: 100%;
-  text-decoration: none;
-  background: rgba(139,26,26,.12);
-  border: 1px solid rgba(196,48,48,.3);
-  border-radius: var(--r);
-  padding: 7px 11px;
-  transition: background .2s, border-color .2s;
-  color: var(--lacquer2);
-}
-.moving-alert-link:hover {
-  background: rgba(139,26,26,.22);
-  border-color: rgba(196,48,48,.5);
-}
-.moving-alert-sym {
-  font-size: 1.7rem;
-  line-height: 1;
-  color: var(--lacquer2);
-  font-family: 'Noto Serif', serif;
-  flex-shrink: 0;
-}
-.moving-alert-name {
-  font-family: 'Noto Serif', serif;
-  font-size: .84rem;
-  color: var(--text);
-}
-.moving-alert-arrow {
-  margin-left: auto;
-  color: var(--dim);
-  font-size: .7rem;
-}
 
 /* ── Question display ── */
 .question-display {
@@ -1151,7 +1069,7 @@ function applyLang(l) {
 ════════════════════════════════════════════════ */
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  // Button shows the OTHER theme (what you'll switch to)
+  document.documentElement.style.colorScheme = theme; /* fix browser native elements */
   document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
   document.getElementById('themeBtn').title = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
   // Meta theme-color
@@ -1255,40 +1173,16 @@ function animateCoins(lines6vals, coinResults, onComplete) {
   stage.classList.add('visible');
   stage.innerHTML = '';
 
-  // Wrapper: left col (coin rows) + right col (hex preview)
-  var inner = document.createElement('div');
-  inner.className = 'coin-stage-inner';
-
-  var linesCol = document.createElement('div');
-  linesCol.className = 'coin-lines-col';
-
-  var hexCol = document.createElement('div');
-  hexCol.className = 'hex-preview-col';
-  hexCol.id = 'hexPreviewCol';
-
-  // Build hex preview lines (6→1 top to bottom, hidden initially)
-  var previewLines = [];
-  for (var pi = 5; pi >= 0; pi--) {
-    var lv = lineValue(lines6vals[pi]);
-    var pl = document.createElement('div');
-    pl.className = 'hex-preview-line' +
-      (lv.yang ? '' : ' yin') +
-      (lv.moving ? ' moving' : '');
-    pl.style.opacity = '0';
-    hexCol.appendChild(pl);
-    previewLines[pi] = pl;
-  }
-
-  // Build coin rows in REVERSE order (line 6 at top, line 1 at bottom)
-  // so the visual matches the hexagram (bottom = first line)
+  // Build all rows (hidden initially)
   var rows = [];
-  for (var i = 5; i >= 0; i--) {
+  for (var i = 0; i < 6; i++) {
     var lv = lineValue(lines6vals[i]);
     var coins = coinResults[i];
     var isMoving = lv.moving;
 
     var row = document.createElement('div');
     row.className = 'line-result-row';
+    row.setAttribute('data-idx', i);
 
     var numEl = document.createElement('div');
     numEl.className = 'line-num';
@@ -1307,7 +1201,7 @@ function animateCoins(lines6vals, coinResults, onComplete) {
 
     var glyphEl = document.createElement('div');
     glyphEl.className = 'line-glyph' + (isMoving ? ' moving' : '');
-    glyphEl.textContent = lv.yang ? '⚊' : '⚋';
+    glyphEl.textContent = lv.glyph;
     row.appendChild(glyphEl);
 
     var sumEl = document.createElement('div');
@@ -1315,47 +1209,33 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     sumEl.textContent = lv.sym;
     row.appendChild(sumEl);
 
-    linesCol.appendChild(row);
-    // Store with original index for timing
-    rows[i] = { row: row, coins: coinsWrap.children, glyph: glyphEl, sum: sumEl, previewLine: previewLines[i] };
+    stage.appendChild(row);
+    rows.push({ row, coins: coinsWrap.children, glyph: glyphEl, sum: sumEl });
   }
 
-  inner.appendChild(linesCol);
-  inner.appendChild(hexCol);
-  stage.appendChild(inner);
+  // Staggered animation
+  var COIN_DELAY   = 80;   // ms between coins within a row
+  var ROW_DELAY    = 220;  // ms between rows
+  var COIN_SETTLE  = 300;  // ms after last coin before showing glyph
 
-  // Animate bottom to top (line 1 first → line 6 last)
-  var COIN_DELAY  = 80;
-  var ROW_DELAY   = 220;
-  var COIN_SETTLE = 280;
-
-  for (var idx = 0; idx < 6; idx++) {
-    (function(rowIdx) {
-      var baseTime = rowIdx * ROW_DELAY;
-      var r = rows[rowIdx];
-      // Coins
-      Array.from(r.coins).forEach(function(coin, coinIdx) {
-        setTimeout(function() { coin.classList.add('visible'); },
-          baseTime + coinIdx * COIN_DELAY);
-      });
-      // Glyph + sum + preview line
-      var glyphTime = baseTime + 3 * COIN_DELAY + COIN_SETTLE;
+  rows.forEach(function(r, rowIdx) {
+    var baseTime = rowIdx * ROW_DELAY;
+    // Animate each coin
+    Array.from(r.coins).forEach(function(coin, coinIdx) {
       setTimeout(function() {
-        r.glyph.classList.add('visible');
-        r.sum.classList.add('visible');
-        r.previewLine.style.opacity = '1';
-        r.previewLine.style.transition = 'opacity .3s';
-      }, glyphTime);
-    })(idx);
-  }
+        coin.classList.add('visible');
+      }, baseTime + coinIdx * COIN_DELAY);
+    });
+    // Show glyph + sum after coins settle
+    var glyphTime = baseTime + 3 * COIN_DELAY + COIN_SETTLE;
+    setTimeout(function() {
+      r.glyph.classList.add('visible');
+      r.sum.classList.add('visible');
+    }, glyphTime);
+  });
 
-  // Show hex preview column after all lines are done
-  var allDone = 5 * ROW_DELAY + 3 * COIN_DELAY + COIN_SETTLE + 100;
-  setTimeout(function() {
-    document.getElementById('hexPreviewCol').classList.add('visible');
-  }, allDone - 200);
-
-  var totalTime = allDone + 200;
+  // Total time before result renders
+  var totalTime = 6 * ROW_DELAY + 3 * COIN_DELAY + COIN_SETTLE + 100;
   setTimeout(onComplete, totalTime);
 }
 
@@ -1520,7 +1400,7 @@ function buildHexHeader(hex) {
   '</div>';
 }
 
-function buildHexBody(hex, movingLines, isSecondary, mutHex) {
+function buildHexBody(hex, movingLines, isSecondary) {
   var q = isSecondary ? '' : (document.getElementById('questionInput').value || '').trim();
   var questionHtml = q ? '<div class="question-display">' + escH(q) + '</div>' : '';
 
@@ -1530,22 +1410,7 @@ function buildHexBody(hex, movingLines, isSecondary, mutHex) {
   if (movingLines && movingLines.length > 0) {
     var nums = movingLines.map(function(i) { return i + 1; }).join(', ');
     var msg = t('movingAlert').replace('%l', nums);
-    var mutSymbol = mutHex ? mutHex.unicode : '';
-    var mutName = mutHex
-      ? (LANG === 'zh' ? mutHex.name.zh : LANG === 'en' ? mutHex.name.en : mutHex.name.pt)
-      : '';
-    movingHtml =
-      '<div class="moving-alert">' +
-        '<span class="moving-alert-icon" aria-hidden="true">⟳</span>' +
-        '<span>' + msg + '</span>' +
-        (mutHex
-          ? '<a href="#hex2" class="moving-alert-link" onclick="event.preventDefault();document.getElementById(\'hex2\').scrollIntoView({behavior:\'smooth\'})">' +
-              '<span class="moving-alert-sym">' + mutSymbol + '</span>' +
-              '<span class="moving-alert-name">' + escH(mutName) + '</span>' +
-              '<span class="moving-alert-arrow">↓</span>' +
-            '</a>'
-          : '') +
-      '</div>';
+    movingHtml = '<div class="moving-alert"><span class="moving-alert-icon" aria-hidden="true">⟳</span><span>' + msg + '</span></div>';
   }
 
   // Only show lines section if primary (or if secondary with context)
@@ -1581,15 +1446,15 @@ function renderResult(result) {
   var html =
     '<div class="hex-card hex-card-reveal">' +
       buildHexHeader(hex) +
-      buildHexBody(hex, movingLines, false, mutHex) +
+      buildHexBody(hex, movingLines, false) +
     '</div>';
 
   if (mutHex) {
     html +=
-      '<div class="hex2-wrapper" id="hex2">' +
+      '<div class="hex2-wrapper">' +
         '<div class="hex2-label">' + escH(t('mutantLabel')) + '</div>' +
         buildHexHeader(mutHex) +
-        buildHexBody(mutHex, [], true, null) +
+        buildHexBody(mutHex, [], true) +
       '</div>';
   }
 
