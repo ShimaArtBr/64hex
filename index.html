@@ -1184,7 +1184,10 @@ function getTrigram(n) {
 }
 
 /* ════════════════════════════════════════════════
-   COIN ANIMATION — staggered reveal, line by line
+   COIN ANIMATION
+   Visual (topo→base): 6, 5, 4, 3, 2, 1
+   Animação (base→topo): 1, 2, 3, 4, 5, 6
+   Dados: linha N → lines6vals[N-1]
 ════════════════════════════════════════════════ */
 function animateCoins(lines6vals, coinResults, onComplete) {
   var stage = document.getElementById('coinStage');
@@ -1197,10 +1200,11 @@ function animateCoins(lines6vals, coinResults, onComplete) {
 
   var rowRefs = {};
 
-  for (var display = 5; display >= 0; display--) {
-    var lv       = lineValue(lines6vals[display]);
-    var coins    = coinResults[display];
-    var lineNum  = display + 1;
+  // Renderiza DOM de cima para baixo: 6 no topo, 1 na base
+  [6, 5, 4, 3, 2, 1].forEach(function(lineNum) {
+    var dataIdx  = lineNum - 1;
+    var lv       = lineValue(lines6vals[dataIdx]);
+    var coins    = coinResults[dataIdx];
     var isMoving = lv.moving;
 
     var row = document.createElement('div');
@@ -1232,23 +1236,21 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     row.appendChild(sumEl);
 
     stage.appendChild(row);
-    rowRefs[display] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
-  }
+    rowRefs[lineNum] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
+  });
 
-  for (var animIdx = 5; animIdx >= 0; animIdx--) {
-    (function(idx) {
-      var visualPos = 5 - idx; // posição visual: idx=5 → topo (pos 0), idx=0 → base (pos 5)
-      var base = visualPos * ROW_DELAY;
-      var r    = rowRefs[idx];
-      Array.from(r.coins).forEach(function(coin, ci) {
-        setTimeout(function() { coin.classList.add('visible'); }, base + ci * COIN_DELAY);
-      });
-      setTimeout(function() {
-        r.glyph.classList.add('visible');
-        r.sum.classList.add('visible');
-      }, base + 3 * COIN_DELAY + COIN_SETTLE);
-    })(animIdx);
-  }
+  // Anima de baixo para cima: 1 primeiro, 6 por último
+  [1, 2, 3, 4, 5, 6].forEach(function(lineNum, animPos) {
+    var base = animPos * ROW_DELAY;
+    var r    = rowRefs[lineNum];
+    Array.from(r.coins).forEach(function(coin, ci) {
+      setTimeout(function() { coin.classList.add('visible'); }, base + ci * COIN_DELAY);
+    });
+    setTimeout(function() {
+      r.glyph.classList.add('visible');
+      r.sum.classList.add('visible');
+    }, base + 3 * COIN_DELAY + COIN_SETTLE);
+  });
 
   var total = 5 * ROW_DELAY + 3 * COIN_DELAY + COIN_SETTLE + 350;
   setTimeout(onComplete, total);
