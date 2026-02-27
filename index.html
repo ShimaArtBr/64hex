@@ -897,8 +897,9 @@ function buildLinesBlock(lines, movingLines) {
 }
 
 function section(zh, label, body, id, open) {
-  return '<div class="section' + (open?' open':'') + '" id="sec-'+id+'">' +
-    '<div class="section-hd" onclick="toggleSection('sec-'+id+'')">' +
+  var secId = 'sec-' + id;
+  return '<div class="section' + (open?' open':'') + '" id="' + secId + '">' +
+    '<div class="section-hd" data-toggle="' + secId + '">' +
       '<div class="section-hd-left">' +
         '<span class="section-zh">' + zh + '</span>' +
         '<span class="section-lbl">' + escH(label) + '</span>' +
@@ -1004,6 +1005,12 @@ function escH(s) {
    EVENTS + INIT
 ════════════════════════════════════════════════ */
 document.getElementById('consultBtn').addEventListener('click', runConsultation);
+
+// Section toggle via event delegation (avoids inline onclick quote issues)
+document.addEventListener('click', function(e) {
+  var hd = e.target.closest('[data-toggle]');
+  if (hd) toggleSection(hd.getAttribute('data-toggle'));
+});
 
 // Lang
 document.getElementById('langBtn').addEventListener('click', function(e) {
