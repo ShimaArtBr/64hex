@@ -1200,8 +1200,8 @@ function animateCoins(lines6vals, coinResults, onComplete) {
 
   var rowRefs = {};
 
-  // Renderiza DOM de cima para baixo: 6 no topo, 1 na base
-  [6, 5, 4, 3, 2, 1].forEach(function(lineNum) {
+  // Renderiza DOM de cima para baixo: 3 no topo, 4 na base (trigrama superior visualmente em baixo)
+  [3, 2, 1, 6, 5, 4].forEach(function(lineNum) {
     var dataIdx  = lineNum - 1;
     var lv       = lines6vals[dataIdx];   // já é objeto {yang, moving, glyph, sym}
     var coins    = coinResults[dataIdx];
