@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e160e"/>
+      <stop offset="100%" stop-color="#0d0806"/>
+    </radialGradient>
+    <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b1a1a" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#8b1a1a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Borda dourada sutil -->
+  <rect width="1200" height="630" fill="none" stroke="#c9a84c" stroke-width="3" stroke-opacity="0.2"/>
+
+  <!-- Glow esquerdo (dourado, ao redor do ícone) -->
+  <ellipse cx="270" cy="315" rx="260" ry="260" fill="url(#glow1)"/>
+
+  <!-- Glow direito (laca, ao redor do texto) -->
+  <ellipse cx="800" cy="315" rx="320" ry="220" fill="url(#glow2)"/>
+
+  <!-- Divisor vertical sutil -->
+  <line x1="520" y1="100" x2="520" y2="530" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.15"/>
+
+  <!-- ══ LADO ESQUERDO — ícone ══ -->
+
+  <!-- Borda do ícone -->
+  <rect x="80" y="80" width="370" height="370" rx="64" fill="#1e1208" stroke="#c9a84c" stroke-width="2" stroke-opacity="0.3"/>
+
+  <!-- Glow interno do ícone -->
+  <ellipse cx="265" cy="255" rx="140" ry="130" fill="url(#glow1)"/>
+
+  <!-- Caractere 易 -->
+  <text
+    x="265"
+    y="350"
+    font-family="'Noto Serif SC', 'Noto Serif CJK SC', serif"
+    font-size="220"
+    font-weight="400"
+    text-anchor="middle"
+    fill="#c9a84c"
+  >易</text>
+
+  <!-- Linha decorativa abaixo do 易 -->
+  <line x1="148" y1="385" x2="382" y2="385" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.3"/>
+
+  <!-- 64hex abaixo da linha -->
+  <text
+    x="265"
+    y="420"
+    font-family="'JetBrains Mono', 'Courier New', monospace"
+    font-size="24"
+    font-weight="400"
+    text-anchor="middle"
+    fill="#c9a84c"
+    letter-spacing="4"
+    opacity="0.6"
+  >64hex</text>
+
+  <!-- ══ LADO DIREITO — texto ══ -->
+
+  <!-- Label pequeno -->
+  <text
+    x="600"
+    y="218"
+    font-family="'JetBrains Mono', 'Courier New', monospace"
+    font-size="18"
+    font-weight="400"
+    fill="#c9a84c"
+    letter-spacing="5"
+    opacity="0.55"
+  >I CHING · 周易</text>
+
+  <!-- Nome principal -->
+  <text
+    x="600"
+    y="306"
+    font-family="'JetBrains Mono', 'Courier New', monospace"
+    font-size="88"
+    font-weight="400"
+    fill="#c9a84c"
+    letter-spacing="2"
+  >64hex</text>
+
+  <!-- Subtítulo -->
+  <text
+    x="600"
+    y="358"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="26"
+    font-weight="400"
+    fill="#b89e88"
+    font-style="italic"
+  >Oráculo do I Ching</text>
+
+  <!-- Linha separadora -->
+  <line x1="600" y1="392" x2="1080" y2="392" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.25"/>
+
+  <!-- Três features -->
+  <text x="600" y="430" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="16" fill="#8a7060" letter-spacing="1">PT · EN · 中文</text>
+  <text x="600" y="456" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="16" fill="#8a7060" letter-spacing="1">64 hexagramas · ritual das 3 moedas</text>
+  <text x="600" y="482" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="16" fill="#8a7060" letter-spacing="1">offline-first · sem anúncios</text>
+
+</svg>
