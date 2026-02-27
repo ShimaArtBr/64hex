@@ -1203,7 +1203,7 @@ function animateCoins(lines6vals, coinResults, onComplete) {
   // Renderiza DOM de cima para baixo: 6 no topo, 1 na base
   [6, 5, 4, 3, 2, 1].forEach(function(lineNum) {
     var dataIdx  = lineNum - 1;
-    var lv       = lineValue(lines6vals[dataIdx]);
+    var lv       = lines6vals[dataIdx];   // já é objeto {yang, moving, glyph, sym}
     var coins    = coinResults[dataIdx];
     var isMoving = lv.moving;
 
@@ -1542,7 +1542,7 @@ document.getElementById('consultBtn').addEventListener('click', function() {
     window._lastResult = result;
 
     // Animate coins, then render
-    animateCoins(rawSums, coinResults, function() {
+    animateCoins(lines6, coinResults, function() {
       renderResult(result);
       btn.disabled = false;
       btn.innerHTML = t('consultBtn');
