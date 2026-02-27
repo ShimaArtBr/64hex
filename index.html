@@ -91,15 +91,22 @@ body {
   background: var(--surface);
   border-bottom: 1px solid var(--bg-gold);
   padding: 0 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   height: 52px;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 14px var(--shadow);
   transition: var(--transition-theme);
+}
+
+.topbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .topbar-brand {
@@ -853,34 +860,36 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 
 <!-- TOP BAR -->
 <header class="topbar">
-  <a class="topbar-brand" href="." aria-label="64hex — I Ching">
-    <div class="brand-mark">易</div>
-    <div>
-      <div class="brand-name">64hex</div>
-      <div class="brand-sub" data-i18n="brandSub">I Ching · 周易</div>
-    </div>
-  </a>
-
-  <div class="topbar-right">
-    <span class="topbar-badge">ZHOU YI</span>
-
-    <div class="lang-wrap" id="langWrap">
-      <button class="lang-btn" id="langBtn"
-              aria-haspopup="true" aria-expanded="false"
-              aria-label="Selecionar idioma">
-        <span id="langLabel">PT</span>
-        <span class="lang-arrow" aria-hidden="true">▼</span>
-      </button>
-      <div class="lang-menu" id="langMenu" role="menu">
-        <button class="lang-opt active" data-lang="pt" role="menuitem">🇧🇷 Português</button>
-        <button class="lang-opt" data-lang="en" role="menuitem">🇬🇧 English</button>
-        <button class="lang-opt" data-lang="zh" role="menuitem">🇨🇳 中文</button>
+  <div class="topbar-inner">
+    <a class="topbar-brand" href="." aria-label="64hex — I Ching">
+      <div class="brand-mark">易</div>
+      <div>
+        <div class="brand-name">64hex</div>
+        <div class="brand-sub" data-i18n="brandSub">I Ching · 周易</div>
       </div>
-    </div>
+    </a>
 
-    <button class="theme-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
-      ☀️
-    </button>
+    <div class="topbar-right">
+      <span class="topbar-badge">ZHOU YI</span>
+
+      <div class="lang-wrap" id="langWrap">
+        <button class="lang-btn" id="langBtn"
+                aria-haspopup="true" aria-expanded="false"
+                aria-label="Selecionar idioma">
+          <span id="langLabel">PT</span>
+          <span class="lang-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button class="lang-opt active" data-lang="pt" role="menuitem">🇧🇷 Português</button>
+          <button class="lang-opt" data-lang="en" role="menuitem">🇬🇧 English</button>
+          <button class="lang-opt" data-lang="zh" role="menuitem">🇨🇳 中文</button>
+        </div>
+      </div>
+
+      <button class="theme-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
+        ☀️
+      </button>
+    </div>
   </div>
 </header>
 
@@ -1226,9 +1235,10 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     rowRefs[display] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
   }
 
-  for (var animIdx = 0; animIdx < 6; animIdx++) {
+  for (var animIdx = 5; animIdx >= 0; animIdx--) {
     (function(idx) {
-      var base = idx * ROW_DELAY;
+      var visualPos = 5 - idx; // posição visual: idx=5 → topo (pos 0), idx=0 → base (pos 5)
+      var base = visualPos * ROW_DELAY;
       var r    = rowRefs[idx];
       Array.from(r.coins).forEach(function(coin, ci) {
         setTimeout(function() { coin.classList.add('visible'); }, base + ci * COIN_DELAY);
