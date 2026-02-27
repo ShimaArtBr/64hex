@@ -1149,32 +1149,60 @@ function lineValue(sum) {
   if (sum === 9) return { yang: true,  moving: true,  glyph: '⚊', sym: '9' };
 }
 
-/* King Wen trigram index from 3 line booleans (bottom, mid, top) */
-function trigramIndex(b0, b1, b2) {
-  var key = (b2?1:0)*4 + (b1?1:0)*2 + (b0?1:0);
-  var map = [8, 4, 6, 3, 7, 2, 5, 1]; // 000→坤(8), 001→震(4), 010→坎(6)…
-  return map[key];
+/* ════════════════════════════════════════════════
+   KING WEN LOOKUP TABLE
+   Derivada diretamente da tabela clássica 8×8.
+
+   Cada trigrama tem uma chave binária:
+   key = (topo?1:0)*4 + (meio?1:0)*2 + (base?1:0)
+     Ch'ien ☰ 111 → key 7
+     Chen   ☳ 001 → key 1
+     K'an   ☵ 010 → key 2
+     Kên    ☶ 100 → key 4
+     K'un   ☷ 000 → key 0
+     Sun    ☴ 110 → key 6
+     Li     ☲ 101 → key 5
+     Tui    ☱ 011 → key 3
+
+   KING_WEN[lower_key][upper_key] = número do hexagrama
+════════════════════════════════════════════════ */
+var KING_WEN = [
+  //upper: 0=K'un 1=Chen 2=K'an 3=Tui 4=Kên 5=Li  6=Sun 7=Ch'ien
+  /* lower 0 K'un  */ [ 2,  16,   8,  45,  23,  35,  20,  12],
+  /* lower 1 Chen  */ [24,  51,   3,  17,  27,  21,  42,  25],
+  /* lower 2 K'an  */ [ 7,  40,  29,  47,   4,  64,  59,   6],
+  /* lower 3 Tui   */ [19,  54,  60,  58,  41,  38,  61,  10],
+  /* lower 4 Kên   */ [15,  62,  39,  31,  52,  56,  53,  33],
+  /* lower 5 Li    */ [36,  55,  63,  49,  22,  30,  37,  13],
+  /* lower 6 Sun   */ [46,  32,  48,  28,  18,  50,  57,  44],
+  /* lower 7 Ch'ien*/ [11,  34,   5,  43,  26,  14,   9,   1]
+];
+
+function trigramKey(b0, b1, b2) {
+  // b0=base, b1=meio, b2=topo da linha
+  return (b2?1:0)*4 + (b1?1:0)*2 + (b0?1:0);
+}
+
+function lookupKingWen(lowerKey, upperKey) {
+  return KING_WEN[lowerKey][upperKey];
 }
 
 function hexFromLines(lines) {
-  // lines[0..2] = A,B,C = trigrama inferior (base)
-  // lines[3..5] = D,E,F = trigrama superior (topo)
-  var lower = trigramIndex(lines[0].yang, lines[1].yang, lines[2].yang);
-  var upper = trigramIndex(lines[3].yang, lines[4].yang, lines[5].yang);
-  return lookupHex(upper, lower);
+  // lines[0..2] = A,B,C = trigrama inferior: base=A(0), meio=B(1), topo=C(2)
+  // lines[3..5] = D,E,F = trigrama superior: base=D(3), meio=E(4), topo=F(5)
+  var lowerKey = trigramKey(lines[0].yang, lines[1].yang, lines[2].yang);
+  var upperKey = trigramKey(lines[3].yang, lines[4].yang, lines[5].yang);
+  return lookupKingWen(lowerKey, upperKey);
 }
 
 function hexMutated(lines, movingLines) {
-  // Inverte APENAS os índices presentes em movingLines (yin↔yang)
-  // Garante consistência com os mesmos índices exibidos ao usuário
+  // Inverte yin↔yang apenas nas linhas de movingLines
   var mut = lines.map(function(l, i) {
     return { yang: movingLines.indexOf(i) >= 0 ? !l.yang : l.yang };
   });
-  // mut[0..2] = A,B,C = trigrama inferior (após mutação)
-  // mut[3..5] = D,E,F = trigrama superior (após mutação)
-  var lower = trigramIndex(mut[0].yang, mut[1].yang, mut[2].yang);
-  var upper = trigramIndex(mut[3].yang, mut[4].yang, mut[5].yang);
-  return lookupHex(upper, lower);
+  var lowerKey = trigramKey(mut[0].yang, mut[1].yang, mut[2].yang);
+  var upperKey = trigramKey(mut[3].yang, mut[4].yang, mut[5].yang);
+  return lookupKingWen(lowerKey, upperKey);
 }
 
 function lookupHex(upper, lower) {
