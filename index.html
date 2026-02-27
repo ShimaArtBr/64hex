@@ -1164,11 +1164,14 @@ function hexFromLines(lines) {
   return lookupHex(upper, lower);
 }
 
-function hexMutated(lines) {
-  // Inverte linhas móveis e recalcula
-  var mut = lines.map(function(l) {
-    return { yang: l.moving ? !l.yang : l.yang };
+function hexMutated(lines, movingLines) {
+  // Inverte APENAS os índices presentes em movingLines (yin↔yang)
+  // Garante consistência com os mesmos índices exibidos ao usuário
+  var mut = lines.map(function(l, i) {
+    return { yang: movingLines.indexOf(i) >= 0 ? !l.yang : l.yang };
   });
+  // mut[0..2] = A,B,C = trigrama inferior (após mutação)
+  // mut[3..5] = D,E,F = trigrama superior (após mutação)
   var lower = trigramIndex(mut[0].yang, mut[1].yang, mut[2].yang);
   var upper = trigramIndex(mut[3].yang, mut[4].yang, mut[5].yang);
   return lookupHex(upper, lower);
@@ -1569,7 +1572,7 @@ document.getElementById('consultBtn').addEventListener('click', function() {
     lines.forEach(function(l, i) { if (l.moving) movingLines.push(i); });
 
     var hexNum    = hexFromLines(lines);
-    var mutHexNum = movingLines.length > 0 ? hexMutated(lines) : null;
+    var mutHexNum = movingLines.length > 0 ? hexMutated(lines, movingLines) : null;
     var hex       = getHex(hexNum);
     var mutHex    = mutHexNum ? getHex(mutHexNum) : null;
 
