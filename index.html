@@ -1185,9 +1185,12 @@ function getTrigram(n) {
 
 /* ════════════════════════════════════════════════
    COIN ANIMATION
-   Visual (topo→base): 6, 5, 4, 3, 2, 1
-   Animação (base→topo): 1, 2, 3, 4, 5, 6
-   Dados: linha N → lines6vals[N-1]
+   Nomenclatura interna: A=linha1(idx0) ... F=linha6(idx5)
+   Trigrama inferior: A, B, C  (idx 0,1,2)
+   Trigrama superior: D, E, F  (idx 3,4,5)
+   DOM topo→base:     F, E, D, C, B, A
+   Animação base→topo: A, B, C, D, E, F
+   Display ao usuário: A→1, B→2, C→3, D→4, E→5, F→6
 ════════════════════════════════════════════════ */
 function animateCoins(lines6vals, coinResults, onComplete) {
   var stage = document.getElementById('coinStage');
@@ -1198,13 +1201,18 @@ function animateCoins(lines6vals, coinResults, onComplete) {
   var ROW_DELAY   = 240;
   var COIN_SETTLE = 300;
 
-  var rowRefs = {};
+  // Mapa interno: letra → índice no array
+  var IDX = { A:0, B:1, C:2, D:3, E:4, F:5 };
+  // Display numérico para o usuário
+  var NUM = { A:1, B:2, C:3, D:4, E:5, F:6 };
 
-  // Renderiza DOM de cima para baixo: 6 no topo, 1 na base
-  [6, 5, 4, 3, 2, 1].forEach(function(lineNum) {
-    var dataIdx  = lineNum - 1;
-    var lv       = lines6vals[dataIdx];   // já é objeto {yang, moving, glyph, sym}
-    var coins    = coinResults[dataIdx];
+  var rowRefs = {}; // chave = letra
+
+  // Renderiza DOM de cima para baixo: F(6) no topo, A(1) na base
+  ['F','E','D','C','B','A'].forEach(function(letter) {
+    var idx      = IDX[letter];
+    var lv       = lines6vals[idx];
+    var coins    = coinResults[idx];
     var isMoving = lv.moving;
 
     var row = document.createElement('div');
@@ -1217,7 +1225,7 @@ function animateCoins(lines6vals, coinResults, onComplete) {
 
     var numEl = document.createElement('div');
     numEl.className = 'line-num';
-    numEl.textContent = lineNum;
+    numEl.textContent = NUM[letter]; // exibe 1–6
     row.appendChild(numEl);
 
     var coinsWrap = document.createElement('div');
@@ -1236,13 +1244,13 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     row.appendChild(sumEl);
 
     stage.appendChild(row);
-    rowRefs[lineNum] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
+    rowRefs[letter] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
   });
 
-  // Anima de baixo para cima: 1 primeiro, 6 por último
-  [1, 2, 3, 4, 5, 6].forEach(function(lineNum, animPos) {
+  // Anima de baixo para cima: A(1) primeiro, F(6) por último
+  ['A','B','C','D','E','F'].forEach(function(letter, animPos) {
     var base = animPos * ROW_DELAY;
-    var r    = rowRefs[lineNum];
+    var r    = rowRefs[letter];
     Array.from(r.coins).forEach(function(coin, ci) {
       setTimeout(function() { coin.classList.add('visible'); }, base + ci * COIN_DELAY);
     });
@@ -1520,28 +1528,30 @@ document.getElementById('consultBtn').addEventListener('click', function() {
 
   // Generate result based on method
   if (METHOD === 'ritual') {
-    // Generate 6 lines via 3-coin method
-    var rawSums = [];
-    var coinResults = [];
+
+    // Gera 6 linhas: índice 0 = linha 1 (base), índice 5 = linha 6 (topo)
+    var coinResults = [];  // coinResults[i] = [c1,c2,c3] da linha i+1
+    var lines6 = [];       // lines6[i] = objeto {yang, moving, sym} da linha i+1
+
     for (var i = 0; i < 6; i++) {
       var c1 = tossCoin(), c2 = tossCoin(), c3 = tossCoin();
-      rawSums.push(c1 + c2 + c3);
       coinResults.push([c1, c2, c3]);
+      lines6.push(lineValue(c1 + c2 + c3));
     }
 
-    var lines6 = rawSums.map(lineValue);
+    // Linhas móveis: índices 0–5 (linha 1–6)
     var movingLines = [];
     lines6.forEach(function(l, i) { if (l.moving) movingLines.push(i); });
 
-    var hexNum = hexFromLines(lines6);
+    var hexNum    = hexFromLines(lines6);
     var mutHexNum = movingLines.length > 0 ? hexMutated(lines6) : null;
-    var hex = getHex(hexNum);
-    var mutHex = mutHexNum ? getHex(mutHexNum) : null;
+    var hex       = getHex(hexNum);
+    var mutHex    = mutHexNum ? getHex(mutHexNum) : null;
 
     var result = { hex: hex, mutHex: mutHex, movingLines: movingLines };
     window._lastResult = result;
 
-    // Animate coins, then render
+    // Anima moedas (passa lines6 e coinResults na mesma ordem de geração)
     animateCoins(lines6, coinResults, function() {
       renderResult(result);
       btn.disabled = false;
