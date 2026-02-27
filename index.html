@@ -66,10 +66,7 @@
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 15px; scroll-behavior: smooth; color-scheme: dark; }
-
-/* Light mode override */
-[data-theme="light"] { color-scheme: light; }
+html { font-size: 15px; scroll-behavior: smooth; }
 
 body {
   font-family: 'Noto Sans', sans-serif;
@@ -280,7 +277,6 @@ body {
 textarea {
   width: 100%;
   background: var(--input-bg);
-  background-color: var(--input-bg); /* força sobre override do browser */
   border: 1px solid var(--input-bd);
   border-radius: var(--r);
   color: var(--text);
@@ -291,12 +287,9 @@ textarea {
   resize: none;
   transition: border-color .2s, background .25s, color .25s;
   line-height: 1.65;
-  -webkit-appearance: none;
-  appearance: none;
-  color-scheme: inherit; /* herda o tema escuro/claro do html */
 }
 textarea:focus { border-color: var(--gold); }
-textarea::placeholder { color: var(--muted); font-style: italic; }
+textarea::placeholder { color: var(--dim); font-style: italic; }
 
 /* ── Method tabs ── */
 .method-tabs {
@@ -374,14 +367,14 @@ textarea::placeholder { color: var(--muted); font-style: italic; }
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 2px 0;
-  font-size: .71rem;
+  padding: 3px 0;
 }
 
 .line-num {
   color: var(--dim);
   font-family: 'JetBrains Mono', monospace;
-  width: 14px;
+  font-size: .62rem;
+  width: 12px;
   text-align: right;
   flex-shrink: 0;
 }
@@ -409,27 +402,30 @@ textarea::placeholder { color: var(--muted); font-style: italic; }
 .coin.tails { background: rgba(90,74,58,.15); color: var(--muted); border-color: var(--dim); }
 
 .line-glyph {
-  font-size: .95rem;
+  font-size: 1.6rem;
+  line-height: 1;
   color: var(--gold);
-  width: 28px;
+  width: 26px;
   text-align: center;
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity .2s;
+  transition: opacity .25s;
+  letter-spacing: -1px;
 }
 .line-glyph.visible { opacity: 1; }
-.line-glyph.moving { color: var(--lacquer2); }
+.line-glyph.moving  { color: var(--lacquer2); }
 
 .line-sum {
   font-family: 'JetBrains Mono', monospace;
   color: var(--muted);
-  font-size: .68rem;
+  font-size: .65rem;
   opacity: 0;
   transition: opacity .2s;
   flex-shrink: 0;
+  width: 10px;
 }
 .line-sum.visible { opacity: 1; }
-.line-sum.moving { color: var(--lacquer2); }
+.line-sum.moving  { color: var(--lacquer2); }
 
 /* ═══════════════════════════════════════════════════
    CORPUS LOADING STATE
@@ -1069,7 +1065,7 @@ function applyLang(l) {
 ════════════════════════════════════════════════ */
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  document.documentElement.style.colorScheme = theme; /* fix browser native elements */
+  // Button shows the OTHER theme (what you'll switch to)
   document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
   document.getElementById('themeBtn').title = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
   // Meta theme-color
@@ -1173,20 +1169,29 @@ function animateCoins(lines6vals, coinResults, onComplete) {
   stage.classList.add('visible');
   stage.innerHTML = '';
 
-  // Build all rows (hidden initially)
-  var rows = [];
-  for (var i = 0; i < 6; i++) {
-    var lv = lineValue(lines6vals[i]);
-    var coins = coinResults[i];
+  var COIN_DELAY  = 80;
+  var ROW_DELAY   = 240;
+  var COIN_SETTLE = 300;
+
+  var rowRefs = {};
+
+  for (var display = 5; display >= 0; display--) {
+    var lv       = lineValue(lines6vals[display]);
+    var coins    = coinResults[display];
+    var lineNum  = display + 1;
     var isMoving = lv.moving;
 
     var row = document.createElement('div');
     row.className = 'line-result-row';
-    row.setAttribute('data-idx', i);
+
+    var glyphEl = document.createElement('div');
+    glyphEl.className = 'line-glyph' + (isMoving ? ' moving' : '');
+    glyphEl.textContent = lv.yang ? '⚊' : '⚋';
+    row.appendChild(glyphEl);
 
     var numEl = document.createElement('div');
     numEl.className = 'line-num';
-    numEl.textContent = i + 1;
+    numEl.textContent = lineNum;
     row.appendChild(numEl);
 
     var coinsWrap = document.createElement('div');
@@ -1199,44 +1204,31 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     });
     row.appendChild(coinsWrap);
 
-    var glyphEl = document.createElement('div');
-    glyphEl.className = 'line-glyph' + (isMoving ? ' moving' : '');
-    glyphEl.textContent = lv.glyph;
-    row.appendChild(glyphEl);
-
     var sumEl = document.createElement('div');
     sumEl.className = 'line-sum' + (isMoving ? ' moving' : '');
     sumEl.textContent = lv.sym;
     row.appendChild(sumEl);
 
     stage.appendChild(row);
-    rows.push({ row, coins: coinsWrap.children, glyph: glyphEl, sum: sumEl });
+    rowRefs[display] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
   }
 
-  // Staggered animation
-  var COIN_DELAY   = 80;   // ms between coins within a row
-  var ROW_DELAY    = 220;  // ms between rows
-  var COIN_SETTLE  = 300;  // ms after last coin before showing glyph
-
-  rows.forEach(function(r, rowIdx) {
-    var baseTime = rowIdx * ROW_DELAY;
-    // Animate each coin
-    Array.from(r.coins).forEach(function(coin, coinIdx) {
+  for (var animIdx = 0; animIdx < 6; animIdx++) {
+    (function(idx) {
+      var base = idx * ROW_DELAY;
+      var r    = rowRefs[idx];
+      Array.from(r.coins).forEach(function(coin, ci) {
+        setTimeout(function() { coin.classList.add('visible'); }, base + ci * COIN_DELAY);
+      });
       setTimeout(function() {
-        coin.classList.add('visible');
-      }, baseTime + coinIdx * COIN_DELAY);
-    });
-    // Show glyph + sum after coins settle
-    var glyphTime = baseTime + 3 * COIN_DELAY + COIN_SETTLE;
-    setTimeout(function() {
-      r.glyph.classList.add('visible');
-      r.sum.classList.add('visible');
-    }, glyphTime);
-  });
+        r.glyph.classList.add('visible');
+        r.sum.classList.add('visible');
+      }, base + 3 * COIN_DELAY + COIN_SETTLE);
+    })(animIdx);
+  }
 
-  // Total time before result renders
-  var totalTime = 6 * ROW_DELAY + 3 * COIN_DELAY + COIN_SETTLE + 100;
-  setTimeout(onComplete, totalTime);
+  var total = 5 * ROW_DELAY + 3 * COIN_DELAY + COIN_SETTLE + 350;
+  setTimeout(onComplete, total);
 }
 
 /* ════════════════════════════════════════════════
