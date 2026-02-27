@@ -1156,14 +1156,17 @@ function trigramIndex(b0, b1, b2) {
   return map[key];
 }
 
-function hexFromLines(lines6) {
-  var lower = trigramIndex(lines6[0].yang, lines6[1].yang, lines6[2].yang);
-  var upper = trigramIndex(lines6[3].yang, lines6[4].yang, lines6[5].yang);
+function hexFromLines(lines) {
+  // lines[0..2] = A,B,C = trigrama inferior (base)
+  // lines[3..5] = D,E,F = trigrama superior (topo)
+  var lower = trigramIndex(lines[0].yang, lines[1].yang, lines[2].yang);
+  var upper = trigramIndex(lines[3].yang, lines[4].yang, lines[5].yang);
   return lookupHex(upper, lower);
 }
 
-function hexMutated(lines6) {
-  var mut = lines6.map(function(l) {
+function hexMutated(lines) {
+  // Inverte linhas móveis e recalcula
+  var mut = lines.map(function(l) {
     return { yang: l.moving ? !l.yang : l.yang };
   });
   var lower = trigramIndex(mut[0].yang, mut[1].yang, mut[2].yang);
@@ -1184,15 +1187,24 @@ function getTrigram(n) {
 }
 
 /* ════════════════════════════════════════════════
-   COIN ANIMATION
-   Nomenclatura interna: A=linha1(idx0) ... F=linha6(idx5)
-   Trigrama inferior: A, B, C  (idx 0,1,2)
-   Trigrama superior: D, E, F  (idx 3,4,5)
-   DOM topo→base:     F, E, D, C, B, A
-   Animação base→topo: A, B, C, D, E, F
-   Display ao usuário: A→1, B→2, C→3, D→4, E→5, F→6
+   COIN ANIMATION — redesenhado do zero
+
+   ROADMAP:
+   1. SORTEIO (feito antes de chamar esta função):
+      lines[0]=A, lines[1]=B, lines[2]=C  → trigrama inferior
+      lines[3]=D, lines[4]=E, lines[5]=F  → trigrama superior
+
+   2. PRÉ-RENDERIZAÇÃO DO DOM (topo→base):
+      F(6), E(5), D(4), C(3), B(2), A(1)
+      espelha visualmente o hexagrama ao lado
+
+   3. ANIMAÇÃO (base→topo, ascendente):
+      A(1) → B(2) → C(3) → D(4) → E(5) → F(6)
+      simula o ritual de construção da base ao topo
+
+   4. DISPLAY ao usuário: A=1, B=2, C=3, D=4, E=5, F=6
 ════════════════════════════════════════════════ */
-function animateCoins(lines6vals, coinResults, onComplete) {
+function animateCoins(lines, coins, onComplete) {
   var stage = document.getElementById('coinStage');
   stage.classList.add('visible');
   stage.innerHTML = '';
@@ -1201,36 +1213,39 @@ function animateCoins(lines6vals, coinResults, onComplete) {
   var ROW_DELAY   = 240;
   var COIN_SETTLE = 300;
 
-  // Mapa interno: letra → índice no array
-  var IDX = { A:0, B:1, C:2, D:3, E:4, F:5 };
-  // Display numérico para o usuário
-  var NUM = { A:1, B:2, C:3, D:4, E:5, F:6 };
+  // Letras internas → índice no array (A=base=idx0 ... F=topo=idx5)
+  var LETTERS = ['A','B','C','D','E','F'];
 
-  var rowRefs = {}; // chave = letra
+  // Guarda referências DOM por letra para a animação
+  var rowRefs = {};
 
-  // Renderiza DOM de cima para baixo: F(6) no topo, A(1) na base
+  // ── PASSO 2: Renderiza DOM F→A (topo→base) ──
   ['F','E','D','C','B','A'].forEach(function(letter) {
-    var idx      = IDX[letter];
-    var lv       = lines6vals[idx];
-    var coins    = coinResults[idx];
+    var idx      = LETTERS.indexOf(letter); // A→0, B→1 ... F→5
+    var lv       = lines[idx];
+    var coinSet  = coins[idx];
     var isMoving = lv.moving;
+    var display  = idx + 1; // número exibido: A→1 ... F→6
 
     var row = document.createElement('div');
     row.className = 'line-result-row';
 
+    // Glifo (⚊ yang / ⚋ yin)
     var glyphEl = document.createElement('div');
     glyphEl.className = 'line-glyph' + (isMoving ? ' moving' : '');
     glyphEl.textContent = lv.yang ? '⚊' : '⚋';
     row.appendChild(glyphEl);
 
+    // Número da linha
     var numEl = document.createElement('div');
     numEl.className = 'line-num';
-    numEl.textContent = NUM[letter]; // exibe 1–6
+    numEl.textContent = display;
     row.appendChild(numEl);
 
+    // Moedas
     var coinsWrap = document.createElement('div');
     coinsWrap.style.cssText = 'display:flex;gap:4px;flex:1;';
-    coins.forEach(function(c) {
+    coinSet.forEach(function(c) {
       var el = document.createElement('div');
       el.className = 'coin ' + (c === 3 ? 'heads' : 'tails');
       el.textContent = c === 3 ? '☯' : '✦';
@@ -1238,6 +1253,7 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     });
     row.appendChild(coinsWrap);
 
+    // Soma
     var sumEl = document.createElement('div');
     sumEl.className = 'line-sum' + (isMoving ? ' moving' : '');
     sumEl.textContent = lv.sym;
@@ -1247,8 +1263,8 @@ function animateCoins(lines6vals, coinResults, onComplete) {
     rowRefs[letter] = { coins: coinsWrap.children, glyph: glyphEl, sum: sumEl };
   });
 
-  // Anima de baixo para cima: A(1) primeiro, F(6) por último
-  ['A','B','C','D','E','F'].forEach(function(letter, animPos) {
+  // ── PASSO 3: Anima A→F (base→topo, ascendente) ──
+  LETTERS.forEach(function(letter, animPos) {
     var base = animPos * ROW_DELAY;
     var r    = rowRefs[letter];
     Array.from(r.coins).forEach(function(coin, ci) {
@@ -1529,30 +1545,39 @@ document.getElementById('consultBtn').addEventListener('click', function() {
   // Generate result based on method
   if (METHOD === 'ritual') {
 
-    // Gera 6 linhas: índice 0 = linha 1 (base), índice 5 = linha 6 (topo)
-    var coinResults = [];  // coinResults[i] = [c1,c2,c3] da linha i+1
-    var lines6 = [];       // lines6[i] = objeto {yang, moving, sym} da linha i+1
-
+    /* ── PASSO 1: SORTEIO A→F ──────────────────────────
+       lines[0]=A=linha1(base) ... lines[5]=F=linha6(topo)
+       coins[i] = [c1,c2,c3] das moedas da linha i
+       Trigrama inferior: lines[0..2] = A,B,C
+       Trigrama superior: lines[3..5] = D,E,F
+    ───────────────────────────────────────────────────── */
+    var lines = [];
+    var coins = [];
     for (var i = 0; i < 6; i++) {
       var c1 = tossCoin(), c2 = tossCoin(), c3 = tossCoin();
-      coinResults.push([c1, c2, c3]);
-      lines6.push(lineValue(c1 + c2 + c3));
+      coins.push([c1, c2, c3]);
+      lines.push(lineValue(c1 + c2 + c3));
     }
 
-    // Linhas móveis: índices 0–5 (linha 1–6)
+    /* ── PASSO 4: RESULTADO ────────────────────────────
+       movingLines: índices 0–5 das linhas móveis
+       hexFromLines usa lines[0..2] como inferior
+                        lines[3..5] como superior
+       hexMutated inverte as linhas móveis e recalcula
+    ───────────────────────────────────────────────────── */
     var movingLines = [];
-    lines6.forEach(function(l, i) { if (l.moving) movingLines.push(i); });
+    lines.forEach(function(l, i) { if (l.moving) movingLines.push(i); });
 
-    var hexNum    = hexFromLines(lines6);
-    var mutHexNum = movingLines.length > 0 ? hexMutated(lines6) : null;
+    var hexNum    = hexFromLines(lines);
+    var mutHexNum = movingLines.length > 0 ? hexMutated(lines) : null;
     var hex       = getHex(hexNum);
     var mutHex    = mutHexNum ? getHex(mutHexNum) : null;
 
     var result = { hex: hex, mutHex: mutHex, movingLines: movingLines };
     window._lastResult = result;
 
-    // Anima moedas (passa lines6 e coinResults na mesma ordem de geração)
-    animateCoins(lines6, coinResults, function() {
+    /* ── PASSOS 2+3: ANIMAÇÃO → depois RENDERIZA ───── */
+    animateCoins(lines, coins, function() {
       renderResult(result);
       btn.disabled = false;
       btn.innerHTML = t('consultBtn');
