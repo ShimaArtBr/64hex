@@ -13,63 +13,64 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="64hex — Consultor do I Ching. 64 hexagramas em português, inglês e chinês clássico.">
-<meta name="theme-color" content="#0d0806" id="metaTheme">
+<meta name="theme-color" content="#0a0a12" id="metaTheme">
 <title>64hex — I Ching</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@400&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@400&family=PT+Serif:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════
    DESIGN TOKENS
 ═══════════════════════════════════════════════════ */
 :root {
-  /* Dourado — mantido */
+  /* Dourado — o sangue do sistema */
   --gold:      #c9a84c;
   --gold2:     #e8c97a;
+  --gold-dim:  #a08830;
 
-  /* Laca vermelha — substitui o jade */
+  /* Laca vermelha — linhas móveis */
   --lacquer:   #8b1a1a;
   --lacquer2:  #c43030;
 
-  /* Vermelho cinábrio — linhas móveis / alertas */
+  /* Vermelho cinábrio — alertas */
   --red:       #b52b0a;
   --red2:      #e03a1a;
 
-  --bg-gold:   rgba(201,168,76,.13);
+  --bg-gold:   rgba(201,168,76,.10);
   --bg-lacquer: rgba(139,26,26,.18);
   --r:    8px;
   --r-lg: 12px;
   --transition-theme: background .25s, color .25s, border-color .25s;
 }
 
-/* DARK — negro quente, como o céu da foto */
+/* DARK — SOLLUN unified */
 [data-theme="dark"] {
-  --bg:       #0d0806;
-  --surface:  #150d08;
-  --panel:    #1e1208;
-  --panel2:   #261808;
-  --text:     #ede8de;
-  --muted:    #9a8878;
-  --dim:      #7a6a5a;
-  --input-bg: #261808;
-  --input-bd: rgba(180,140,80,.2);
-  --shadow:   rgba(0,0,0,.6);
+  --bg:       #0a0a12;
+  --surface:  #0f0e18;
+  --panel:    #16142a;
+  --panel2:   #1c1835;
+  --text:     #ede8f0;
+  --muted:    #9a90b8;
+  --dim:      #6a6090;
+  --input-bg: #16142a;
+  --input-bd: rgba(201,168,76,.12);
+  --shadow:   rgba(0,0,0,.55);
   --ink:      var(--gold);
 }
 
-/* LIGHT — papel de arroz com tinta */
+/* LIGHT — papel artesanal */
 [data-theme="light"] {
-  --bg:       #f5f0e8;
-  --surface:  #fdfaf4;
+  --bg:       #f5f2ea;
+  --surface:  #faf8f2;
   --panel:    #ffffff;
-  --panel2:   #f0ebe0;
-  --text:     #1a1008;
-  --muted:    #6b5040;
-  --dim:      #a09080;
-  --input-bg: #faf7f0;
-  --input-bd: rgba(120,80,40,.2);
-  --shadow:   rgba(0,0,0,.1);
+  --panel2:   #f0ede4;
+  --text:     #1a1814;
+  --muted:    #6b6458;
+  --dim:      #9a9488;
+  --input-bg: #faf8f2;
+  --input-bd: rgba(201,168,76,.12);
+  --shadow:   rgba(0,0,0,.06);
   --ink:      #7a4a10;
 }
 
@@ -86,26 +87,46 @@ html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
   font-family: 'Noto Sans', sans-serif;
+  font-weight: 300;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.7;
   transition: var(--transition-theme);
 }
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* REGRA CARDINAL: nenhum texto em bold */
+strong, b, h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 
 /* ═══════════════════════════════════════════════════
    TOPBAR
 ═══════════════════════════════════════════════════ */
 .topbar {
-  background: var(--surface);
+  background: rgba(15,14,24,.88);
   border-bottom: 1px solid var(--bg-gold);
   padding: 0 22px;
-  height: 52px;
+  height: 54px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 14px var(--shadow);
+  box-shadow: 0 2px 16px var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   transition: var(--transition-theme);
+}
+[data-theme="light"] .topbar {
+  background: rgba(250,248,242,.90);
 }
 
 .topbar-inner {
@@ -127,8 +148,8 @@ body {
 }
 
 .brand-mark {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: 1.5px solid var(--gold);
   border-radius: 50%;
   display: flex;
@@ -136,15 +157,16 @@ body {
   justify-content: center;
   font-size: 1rem;
   color: var(--gold);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   flex-shrink: 0;
 }
 
 .brand-name {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'PT Serif', serif;
   font-size: .9rem;
   color: var(--gold);
-  letter-spacing: .04em;
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
 
 .brand-sub {
@@ -157,13 +179,14 @@ body {
 .topbar-right { display: flex; align-items: center; gap: 9px; }
 
 .topbar-badge {
-  background: rgba(139,26,26,.15);
-  border: 1px solid rgba(139,26,26,.4);
+  background: rgba(201,168,76,.08);
+  border: 1px solid rgba(201,168,76,.25);
   border-radius: 20px;
   padding: 2px 9px;
-  font-size: .72rem;
-  color: var(--lacquer2);
-  letter-spacing: .08em;
+  font-size: .54rem;
+  color: var(--gold-dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
   font-family: 'JetBrains Mono', monospace;
 }
 
@@ -275,8 +298,9 @@ body {
 }
 
 .panel-title {
-  font-family: 'Noto Serif', serif;
-  font-size: 1rem;
+  font-family: 'PT Serif', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
   color: var(--gold);
   margin-bottom: 16px;
   padding-bottom: 10px;
@@ -291,7 +315,8 @@ body {
 .field-group { margin-bottom: 14px; }
 
 .field-label {
-  font-size: .72rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .60rem;
   color: var(--muted);
   letter-spacing: .09em;
   text-transform: uppercase;
@@ -302,18 +327,19 @@ body {
 textarea {
   width: 100%;
   background: var(--input-bg);
-  border: 1px solid var(--input-bd);
+  border: 1px solid rgba(201,168,76,.12);
   border-radius: var(--r);
   color: var(--text);
-  font-family: 'Noto Serif', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: .86rem;
-  padding: 9px 11px;
+  font-weight: 300;
+  padding: 10px 14px;
   outline: none;
   resize: none;
   transition: border-color .2s, background .25s, color .25s;
   line-height: 1.65;
 }
-textarea:focus { border-color: var(--gold); }
+textarea:focus { border-color: rgba(201,168,76,.35); }
 textarea::placeholder { color: var(--dim); font-style: italic; }
 
 /* ── Method tabs ── */
@@ -325,15 +351,17 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .method-tab {
   flex: 1;
   padding: 8px 6px;
-  border: 1px solid var(--input-bd);
+  border: 1px solid rgba(201,168,76,.12);
   border-radius: var(--r);
-  background: var(--input-bg);
+  background: transparent;
   color: var(--muted);
-  font-size: .78rem;
+  font-size: .60rem;
   cursor: pointer;
   text-align: center;
   transition: all .2s;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
 .method-tab:hover { border-color: var(--gold); color: var(--text); }
 .method-tab.active {
@@ -342,10 +370,12 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   color: var(--gold2);
 }
 .method-desc {
-  font-size: .72rem;
+  font-size: .70rem;
   color: var(--dim);
   line-height: 1.6;
   min-height: 2rem;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 300;
 }
 
 /* ── Consult button ── */
@@ -355,18 +385,19 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   padding: 14px;
   border-radius: var(--r);
   background: var(--gold);
-  border: none;
-  color: #1a1828;
-  font-family: 'Noto Sans', sans-serif;
-  font-size: .9rem;
-  font-weight: 500;
+  border: 1px solid var(--gold);
+  color: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .60rem;
+  font-weight: 400;
   cursor: pointer;
-  transition: background .2s, transform .1s, opacity .2s;
-  letter-spacing: .03em;
+  transition: background .2s, transform .1s, opacity .2s, border-color .2s;
+  letter-spacing: .12em;
+  text-transform: uppercase;
   position: relative;
   overflow: hidden;
 }
-.consult-btn:hover:not(:disabled) { background: var(--gold2); }
+.consult-btn:hover:not(:disabled) { background: var(--gold2); border-color: var(--gold2); }
 .consult-btn:active:not(:disabled) { transform: scale(.98); }
 .consult-btn:disabled { opacity: .55; cursor: not-allowed; }
 
@@ -509,10 +540,10 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   font-size: 5rem;
   line-height: 1;
   color: var(--gold);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
 }
 .empty-txt {
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   font-size: .88rem;
   color: var(--muted);
   text-align: center;
@@ -553,7 +584,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   font-size: 4rem;
   line-height: 1;
   color: var(--gold);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   flex-shrink: 0;
   /* Ritual reveal animation */
   opacity: 0;
@@ -574,7 +605,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .hex-name-zh {
   font-size: 1.5rem;
   color: var(--gold2);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   line-height: 1.2;
   margin-top: 2px;
 }
@@ -587,7 +618,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .hex-name-tr {
   font-size: 1.1rem;
   color: var(--text);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   margin-top: 6px;
 }
 .hex-keywords {
@@ -643,7 +674,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 
 /* ── Question display ── */
 .question-display {
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   font-style: italic;
   font-size: .85rem;
   color: var(--muted);
@@ -685,7 +716,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 .section-zh {
   font-size: .95rem;
   color: var(--gold);
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
 }
 .section-lbl { font-size: .78rem; color: var(--muted); }
 
@@ -727,7 +758,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 }
 
 .text-zh {
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   font-size: .92rem;
   color: var(--ink);
   letter-spacing: .04em;
@@ -736,7 +767,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 }
 
 .text-verse {
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
   font-style: italic;
   font-size: .88rem;
   color: var(--text);
@@ -754,7 +785,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   font-size: .83rem;
   color: var(--text);
   line-height: 1.72;
-  font-family: 'Noto Serif', serif;
+  font-family: 'PT Serif', serif;
 }
 
 .section-divider {
@@ -839,7 +870,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .install-banner-text { flex: 1; line-height: 1.4; }
-.install-banner-title { font-weight: 500; color: var(--gold); font-size: .82rem; }
+.install-banner-title { color: var(--gold); font-size: .82rem; }
 .install-btn {
   background: var(--gold);
   border: none;
@@ -847,7 +878,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   padding: 7px 14px;
   color: #1a1828;
   font-size: .75rem;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   white-space: nowrap;
   font-family: 'Noto Sans', sans-serif;
@@ -864,17 +895,57 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 }
 .install-banner.hidden { display: none; }
 /* ═══════════════════════════════════════════════════
-   FOOTER
+   FOOTER — SOLLUN unified
 ═══════════════════════════════════════════════════ */
 .app-footer {
-  text-align: center;
-  padding: 18px 22px 28px;
-  font-size: .72rem;
+  background: var(--surface);
+  border-top: 1px solid var(--bg-gold);
+  padding: 36px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .52rem;
   color: var(--dim);
   letter-spacing: .08em;
-  font-family: 'JetBrains Mono', monospace;
+  max-width: 100%;
+  transition: var(--transition-theme);
 }
-.app-footer .heart { color: #e03a1a; }
+.footer-brand {
+  font-family: 'PT Serif', serif;
+  font-size: .52rem;
+  color: var(--gold);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.footer-brand:hover { color: var(--gold2); }
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+.footer-links a {
+  color: var(--dim);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .52rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--gold); }
+.footer-tagline {
+  font-size: .52rem;
+  letter-spacing: .08em;
+  color: var(--dim);
+}
+@media (max-width: 540px) {
+  .app-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
 </style>
 <body>
 
@@ -972,7 +1043,12 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 
 <!-- FOOTER -->
 <footer class="app-footer">
-  <span data-i18n="footer"></span>
+  <a class="footer-brand" href="https://sollun.app">SOLLUN</a>
+  <div class="footer-links">
+    <a href="https://um23.app">UM23</a>
+    <a href="https://bazilar.app">BAZILAR</a>
+  </div>
+  <span class="footer-tagline">feito com tempo</span>
 </footer>
 
 <!-- PWA Install Banner -->
@@ -1022,7 +1098,7 @@ var T = {
     lineMoving: 'móvel',
     installMsg: 'Adicione à tela inicial para uso offline',
     installAction: 'Instalar',
-    footer: 'FEITO COM <span class="heart">❤️</span> POR SOLLUN',
+    footer: '',
   },
   en: {
     brandSub: 'I Ching · 周易',
@@ -1043,7 +1119,7 @@ var T = {
     lineMoving: 'moving',
     installMsg: 'Add to home screen for offline use',
     installAction: 'Install',
-    footer: 'MADE WITH <span class="heart">❤️</span> BY SOLLUN',
+    footer: '',
   },
 };
 
@@ -1098,7 +1174,7 @@ function applyTheme(theme) {
   document.getElementById('themeBtn').title = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
   // Meta theme-color
   var metaTheme = document.getElementById('metaTheme');
-  if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0d0806' : '#fdfaf4');
+  if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0a0a12' : '#f5f2ea');
   try { localStorage.setItem('64hex-theme', theme); } catch(e) {}
 }
 

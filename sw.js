@@ -1,10 +1,10 @@
 /* 64hex — Service Worker v1.0 */
-const CACHE = '64hex-v1';
+const CACHE = '64hex-v2';
 const SHELL = [
   '/',
   '/index.html',
   '/corpus.json',
-  'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@400&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap'
+  'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@400&family=PT+Serif:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap'
 ];
 
 self.addEventListener('install', e => {
