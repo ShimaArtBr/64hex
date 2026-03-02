@@ -13,7 +13,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="64hex — Consultor do I Ching. 64 hexagramas em português, inglês e chinês clássico.">
-<meta name="theme-color" content="#0a0a12" id="metaTheme">
+<meta name="theme-color" content="#0b0a0a" id="metaTheme">
 <title>64hex — I Ching</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -44,18 +44,18 @@
   --transition-theme: background .25s, color .25s, border-color .25s;
 }
 
-/* DARK — SOLLUN unified */
+/* DARK — SOLLUN unified — warm charcoal */
 [data-theme="dark"] {
-  --bg:       #0a0a12;
-  --surface:  #0f0e18;
-  --panel:    #16142a;
-  --panel2:   #1c1835;
-  --text:     #ede8f0;
-  --muted:    #9a90b8;
-  --dim:      #6a6090;
-  --input-bg: #16142a;
+  --bg:       #0b0a0a;
+  --surface:  #131211;
+  --panel:    #1c1a18;
+  --panel2:   #242120;
+  --text:     #e8e5e0;
+  --muted:    #8a8580;
+  --dim:      #5c5855;
+  --input-bg: #1c1a18;
   --input-bd: rgba(201,168,76,.12);
-  --shadow:   rgba(0,0,0,.55);
+  --shadow:   rgba(0,0,0,.50);
   --ink:      var(--gold);
 }
 
@@ -113,7 +113,7 @@ strong, b, h1, h2, h3, h4, h5, h6 { font-weight: 400; }
    TOPBAR
 ═══════════════════════════════════════════════════ */
 .topbar {
-  background: rgba(15,14,24,.88);
+  background: rgba(11,10,10,.88);
   border-bottom: 1px solid var(--bg-gold);
   padding: 0 22px;
   height: 54px;
@@ -876,7 +876,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   border: none;
   border-radius: var(--r);
   padding: 7px 14px;
-  color: #1a1828;
+  color: #1a1814;
   font-size: .75rem;
   font-weight: 400;
   cursor: pointer;
@@ -901,6 +901,11 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   background: var(--surface);
   border-top: 1px solid var(--bg-gold);
   padding: 36px 24px;
+  transition: var(--transition-theme);
+}
+.footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -908,8 +913,6 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   font-size: .52rem;
   color: var(--dim);
   letter-spacing: .08em;
-  max-width: 100%;
-  transition: var(--transition-theme);
 }
 .footer-brand {
   font-family: 'PT Serif', serif;
@@ -940,7 +943,7 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
   color: var(--dim);
 }
 @media (max-width: 540px) {
-  .app-footer {
+  .footer-inner {
     flex-direction: column;
     gap: 12px;
     text-align: center;
@@ -1043,12 +1046,14 @@ textarea::placeholder { color: var(--dim); font-style: italic; }
 
 <!-- FOOTER -->
 <footer class="app-footer">
-  <a class="footer-brand" href="https://sollun.app">SOLLUN</a>
-  <div class="footer-links">
-    <a href="https://um23.app">UM23</a>
-    <a href="https://bazilar.app">BAZILAR</a>
+  <div class="footer-inner">
+    <a class="footer-brand" href="https://sollun.app">SOLLUN</a>
+    <div class="footer-links">
+      <a href="https://um23.app">UM23</a>
+      <a href="https://bazilar.app">BAZILAR</a>
+    </div>
+    <span class="footer-tagline">feito com tempo</span>
   </div>
-  <span class="footer-tagline">feito com tempo</span>
 </footer>
 
 <!-- PWA Install Banner -->
@@ -1174,7 +1179,7 @@ function applyTheme(theme) {
   document.getElementById('themeBtn').title = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
   // Meta theme-color
   var metaTheme = document.getElementById('metaTheme');
-  if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0a0a12' : '#f5f2ea');
+  if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#0b0a0a' : '#f5f2ea');
   try { localStorage.setItem('64hex-theme', theme); } catch(e) {}
 }
 
